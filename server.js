@@ -8,42 +8,46 @@ var request = require("request");
 var cheerio = require("cheerio");
 
 // Require all models
-var db = require("./models");
-
-// Database configuration
-var databaseUrl = "mongo-scraper";
-var collections = ["scrapedData"];
-
-// Hook mongojs configuration to the db variable
-var db = mongojs(databaseUrl, collections);
-db.on("error", function(error) {
-  console.log("Database Error:", error);
-});
+// var db = require("./models");
 
 // Set mongoose to leverage built in JavaScript ES6 Promises
 mongoose.Promise = Promise;
+// Connect to the Mongo DB
+mongoose.connect("mongodb://localhost/mongo-scraper");
+var db = mongoose.connection;
 
-var PORT = 3000;
+db.on('error', function (err) {
+  console.log('Mongoose Error: ', err);
+});
+
+db.once('open', function () {
+  console.log('Mongoose connection successful.');
+});
+
+
 
 // Initialize Express
 var app = express();
 
-
 // Configure middleware
 app.use(express.static("public"));
-app.use(body.urlencoded({extended: false}));
+app.use(bodyParser.urlencoded({extended: false}));
 app.engine("handlebars", exphbs({defaultLayout: "main"}));
 app.set("view engine", "handlebars");
 
 
+// Bring in our routes file into the the server files
+// var routes = require('./config/routes.js');
+
+// Incorporate these routes into our app
+// app.use('/', routes);
 
 
-// Connect to the Mongo DB
-mongoose.connect("mongodb://localhost/mongo-scraper");
 
-
+// Set port
+var PORT = process.env.PORT || 3000;
 
 // Start the server
-app.listen(port, function() {
-	console.log("Listening on port " + port);
-})
+app.listen(PORT, function() {
+	console.log("Listening on port " + PORT);
+});
