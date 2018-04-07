@@ -7,41 +7,42 @@ var mongoose = require("mongoose");
 var request = require("request");
 var cheerio = require("cheerio");
 
+
 // Require all models
-// var db = require("./models");
+var Article = require("./models/Article.js");
+var Note = require("./models/Note.js");
+
 
 // Set mongoose to leverage built in JavaScript ES6 Promises
 mongoose.Promise = Promise;
 // Connect to the Mongo DB
 mongoose.connect("mongodb://localhost/mongo-scraper");
-var db = mongoose.connection;
+var connection = mongoose.connection;
 
-db.on('error', function (err) {
+connection.on('error', function (err) {
   console.log('Mongoose Error: ', err);
 });
 
-db.once('open', function () {
+connection.once('open', function () {
   console.log('Mongoose connection successful.');
 });
-
 
 
 // Initialize Express
 var app = express();
 
-// Configure middleware
+// Static directory
 app.use(express.static("public"));
+
 app.use(bodyParser.urlencoded({extended: false}));
+
+// Set Handlebars as the default templating engine.
 app.engine("handlebars", exphbs({defaultLayout: "main"}));
 app.set("view engine", "handlebars");
 
 
 // Bring in our routes file into the the server files
-// var routes = require('./config/routes.js');
-
-// Incorporate these routes into our app
-// app.use('/', routes);
-
+// var routes = require('./routes');
 
 
 // Set port
